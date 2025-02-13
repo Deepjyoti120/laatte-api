@@ -3,25 +3,33 @@ import { getEnvironmentVariable } from './environments/env';
 import UserRouter from './routers/users.routers';
 import * as bodyParser from 'body-parser';
 import EmployeeRouter from './routers/employee.routers';
-import  GeneralRouter from './routers/general.routers';
+import GeneralRouter from './routers/general.routers';
 import * as multer from 'multer';
 import { Constants } from './shared/constants';
 import * as path from 'path';
 import { createServer, Server as HttpServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
-
+import { createClient } from 'redis';
 
 export class Server {
     public app: express.Application = express();
     pool: any;
     private io: SocketIOServer;
-    public upload: multer.Multer; 
+    public upload: multer.Multer;
     public server: HttpServer;
+    private redisPublisher;
+    private redisSubscriber;
     constructor() {
         this.server = createServer(this.app);
         this.io = new SocketIOServer(this.server, {
             cors: { origin: "*" },
         });
+        // Initialize Redis Pub/Sub
+        this.redisPublisher = createClient();
+        this.redisSubscriber = createClient();
+        this.redisPublisher.connect();
+        this.redisSubscriber.connect();
+
         this.setConfigaration();
         this.setRoutes();
         this.setupWebSocket();
@@ -37,10 +45,10 @@ export class Server {
     connectPostgresql() {
         const env = getEnvironmentVariable();
         env.db.initialize()
-        .then(() => {
-            console.log('PG Connected');
-        })
-    .catch((error) => console.log(error))
+            .then(() => {
+                console.log('PG Connected');
+            })
+            .catch((error) => console.log(error))
     }
 
     configureBodyParser() {
@@ -82,10 +90,15 @@ export class Server {
             console.log("New WebSocket connection:", socket.id);
             socket.on("message", (data) => {
                 console.log("Received:", data);
-                socket.broadcast.emit("message", data);
+                // socket.broadcast.emit("message", data);
+                this.redisPublisher.publish("message", JSON.stringify(data));
             });
             socket.on("disconnect", () => {
                 console.log("User disconnected:", socket.id);
+            });
+            this.redisSubscriber.subscribe("chat-messages", (message) => {
+                console.log("Broadcasting redisSubscriber message:", message);
+                this.io.emit("message", JSON.parse(message)); 
             });
         });
     }
