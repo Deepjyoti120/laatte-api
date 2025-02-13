@@ -1,0 +1,121 @@
+[
+  {
+    "departmentName": "Human Resources",
+    "designations": [
+      "HR Manager",
+      "HR Assistant",
+      "Recruitment Specialist",
+      "HR Business Partner",
+      "Compensation and Benefits Manager",
+      "Learning and Development Specialist"
+    ]
+  },
+  {
+    "departmentName": "Engineering",
+    "designations": [
+      "Software Engineer",
+      "Senior Software Engineer",
+      "Engineering Manager",
+      "QA Engineer",
+      "DevOps Engineer",
+      "Frontend Developer",
+      "Backend Developer",
+      "Full Stack Developer",
+      "Technical Architect"
+    ]
+  },
+  {
+    "departmentName": "Sales",
+    "designations": [
+      "Sales Manager",
+      "Sales Executive",
+      "Sales Specialist",
+      "Account Manager",
+      "Sales Associate",
+      "Sales Director",
+      "Business Development Manager"
+    ]
+  },
+  {
+    "departmentName": "Marketing",
+    "designations": [
+      "Marketing Manager",
+      "Digital Marketing Specialist",
+      "Content Writer",
+      "SEO Specialist",
+      "Social Media Manager",
+      "Brand Manager",
+      "Marketing Analyst",
+      "Marketing Director"
+    ]
+  },
+  {
+    "departmentName": "Finance",
+    "designations": [
+      "Finance Manager",
+      "Finance Assistant",
+      "Finance Analyst",
+      "Accountant",
+      "Financial Planner",
+      "Tax Manager",
+      "Investment Analyst",
+      "Chief Financial Officer (CFO)"
+    ]
+  },
+  {
+    "departmentName": "Operations",
+    "designations": [
+      "Operations Manager",
+      "Operations Assistant",
+      "Supply Chain Manager",
+      "Logistics Coordinator",
+      "Inventory Manager",
+      "Business Operations Analyst"
+    ]
+  },
+  {
+    "departmentName": "Information Technology",
+    "designations": [
+      "IT Manager",
+      "Network Engineer",
+      "System Administrator",
+      "Help Desk Support",
+      "IT Support Specialist",
+      "Database Administrator",
+      "Cybersecurity Analyst",
+      "Chief Technology Officer (CTO)"
+    ]
+  },
+  {
+    "departmentName": "Customer Support",
+    "designations": [
+      "Customer Support Manager",
+      "Customer Support Executive",
+      "Technical Support Engineer",
+      "Customer Service Representative",
+      "Customer Success Manager"
+    ]
+  },
+  {
+    "departmentName": "Legal",
+    "designations": [
+      "Legal Advisor",
+      "Legal Assistant",
+      "General Counsel",
+      "Corporate Lawyer",
+      "Compliance Officer",
+      "Contract Manager"
+    ]
+  },
+  {
+    "departmentName": "Administration",
+    "designations": [
+      "Admin Manager",
+      "Office Assistant",
+      "Facilities Coordinator",
+      "Executive Assistant",
+      "Receptionist",
+      "Admin Executive"
+    ]
+  }
+]
