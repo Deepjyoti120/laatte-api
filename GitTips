@@ -35,3 +35,7 @@ Upload code to Github
         https://stackoverflow.com/questions/10904339/github-fatal-remote-origin-already-exists
 
 **************** Initialize Finished ****************
+**************** Service Start Stop ****************
+brew services start redis
+brew services stop redis
+**************** Service Start Stop ****************
