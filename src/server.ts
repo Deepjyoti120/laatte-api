@@ -96,7 +96,7 @@ export class Server {
             socket.on("disconnect", () => {
                 console.log("User disconnected:", socket.id);
             });
-            this.redisSubscriber.subscribe("chat-messages", (message) => {
+            this.redisSubscriber.subscribe("message", (message) => {
                 console.log("Broadcasting redisSubscriber message:", message);
                 this.io.emit("message", JSON.parse(message)); 
             });
