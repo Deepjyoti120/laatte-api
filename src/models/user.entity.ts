@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, BaseEntity, OneToMany, ManyToOne, JoinColumn, OneToOne, Unique } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, BaseEntity, OneToMany, ManyToOne, JoinColumn, OneToOne, Unique, Check } from 'typeorm';
 import { Document } from './Document';
 import { FinancialDetail } from './FinancialDetail';
 import { Role } from '../shared/enums/role.enums';
@@ -18,16 +18,23 @@ export class User extends BaseEntity {
   @Column({ type: 'boolean', default: true })
   is_active: boolean;
 
-  @Column({ type: 'enum', enum: Role, nullable: true, default: Role.EMPLOYEE })
+  @Column({ type: 'boolean', default: false })
+  is_profile_done: boolean;
+
+  @Column({ type: 'enum', enum: Role, nullable: true, default: Role.USER })
   role: Role;
 
-  @Column({ type: 'varchar', length: 255, unique: true })
+  @Column({ type: 'varchar', length: 255, unique: true , nullable: true })
   email: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255 , nullable: true })
   password: string;
 
-  @Column({ type: 'varchar', length: 255, unique: true })
+  // device_name
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  device_name: string;
+
+  @Column({ type: 'varchar', length: 255, unique: true, nullable: true })
   username: string;
   // @Column({ type: 'bigint', unique: true, default: () => `nextval('username_seq')` })
   // username: number;
@@ -133,6 +140,16 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
+
+  @Column({ type: 'int', nullable: true })
+  @Check("otp >= 100000 AND otp <= 999999")
+  otp: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 6, nullable: true })
+  latitude: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 6, nullable: true })
+  longitude: number;
 
   // toJSON() {
   //   const { password, verification_token, verification_token_time, ...user } = this;

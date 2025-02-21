@@ -93,4 +93,40 @@ export class UserValidators {
             ),
         ]
     }
+    static otpRequest() {
+        return [
+            body('phone', 'Phone Number is required').isString().custom(async (phone, { req }) => {
+                let user = await User.findOne({ where: { phone } });
+                if (!user) {
+                    user = await User.create({ phone });
+                }
+                req.user = user;
+                return true;
+            }),
+        ];
+    }
+    
+    static otp() {
+        return [
+            body('phone', 'Phone Number is required').isString().custom(async (phone, { req }) => {
+                const user = await User.findOne({ where: { phone } });
+                if (user) {
+                    req.user = user;
+                    return true;
+                } else {
+                    throw new Error('User Does Not Exist');
+                }
+            }),
+            body('otp', 'otp is required').isNumeric().isLength({ min: 6, max: 6 })
+                .withMessage('otp must be 6 characters')
+        ];
+    }
+
+    static location() {
+        return [
+            body('latitude', 'latitude is Required').isNumeric(),
+            body('longitude', 'longitude is Required').isNumeric(),
+        ];
+    }
+
 }

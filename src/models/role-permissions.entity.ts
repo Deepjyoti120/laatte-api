@@ -9,7 +9,7 @@ export class RolePermission extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ type: 'enum', enum: Role, nullable: true, default: Role.EMPLOYEE })
+    @Column({ type: 'enum', enum: Role, nullable: true, default: Role.USER })
     role: Role;
 
     @ManyToOne(() => Module, (module) => module.features, { onDelete: 'CASCADE', onUpdate: 'CASCADE', eager: true })

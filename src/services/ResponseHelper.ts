@@ -14,13 +14,6 @@ class ResponseHelper {
             data,
         });
     }
-    static created(res, data, message = 'Created') {
-        return res.status(201).json({
-            success: true,
-            message,
-            data,
-        });
-    }
 
     static error(res, message = 'Error', statusCode = 500) {
         return res.status(statusCode).json({
@@ -46,14 +39,29 @@ class ResponseHelper {
             success: true,
             message,
             data: {
-                items: data,        // Paginated items
-                total,              // Total items in the database
-                totalPages,         // Total pages available
-                currentPage,        // Current page number
-                nextPage,           // Next page number, or null if none
-                prevPage,           // Previous page number, or null if none
-                limit               // Items per page
+                items: data,        
+                total,    
+                totalPages,   
+                currentPage,   
+                nextPage,     
+                prevPage,    
+                limit
             }
+        });
+    }
+
+    static validationError(res, message = 'Not Found') {
+        return res.status(400).json({
+            success: false,
+            message,
+        });
+    }
+
+    static created(res, data, message = 'Created') {
+        return res.status(201).json({
+            success: true,
+            message,
+            data,
         });
     }
 }

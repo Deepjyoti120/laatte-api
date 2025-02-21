@@ -55,23 +55,23 @@ export class ModuleSeeder implements Seeder {
                         general: ['basic-info'],
                         role_permission: ['role_permission', 'search'],
                     },
-                    [Role.MANAGER]: {
-                        employee: ['search'],
-                        attendance: ['search'],
-                        report: ['search'],
-                    },
-                    [Role.EMPLOYEE]: {
-                        general: ['basic-info'],
-                    },
-                    [Role.HR]: {
-                        employee: ['add', 'search'],
-                        attendance: ['attendance', 'search'],
-                        leave: ['leave', 'search'],
-                    },
-                    [Role.SUPERVISOR]: {
-                        attendance: ['attendance'],
-                        report: ['search'],
-                    },
+                    // [Role.MANAGER]: {
+                    //     employee: ['search'],
+                    //     attendance: ['search'],
+                    //     report: ['search'],
+                    // },
+                    // [Role.EMPLOYEE]: {
+                    //     general: ['basic-info'],
+                    // },
+                    // [Role.HR]: {
+                    //     employee: ['add', 'search'],
+                    //     attendance: ['attendance', 'search'],
+                    //     leave: ['leave', 'search'],
+                    // },
+                    // [Role.SUPERVISOR]: {
+                    //     attendance: ['attendance'],
+                    //     report: ['search'],
+                    // },
                 };
                 for (const [roleKey, moduleFeatures] of Object.entries(roleAssignments)) {
                     const role = roleKey as Role;
