@@ -247,4 +247,13 @@ export class UserController {
             next(e);
         }
     }
+    static async uploadProfilePicture(req, res, next) {
+        const body = req.body;
+        try {
+            return ResponseHelper.success(res, body, 'Successfully Logged In');
+        } catch (e) {
+            console.error("Error in uploadProfilePicture:", e);
+            next(e);
+        }
+    }
 }

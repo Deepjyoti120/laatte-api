@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { GlobalMiddleWare } from "../middlewares/global.middleware";
 import { GeneralController } from "../controllers/general.controller";
-import { upload } from "../middlewares/upload.middleware";
+// import { upload } from "../middlewares/upload.middleware";
 export class GeneralRouter {
     public router: Router;
     constructor() {
@@ -19,8 +19,8 @@ export class GeneralRouter {
         // this.router.post('/add-module', UserValidators.signUp(), GlobalMiddleWare.checkError, UserController.signUp);
     }
     patchRoutes() {
-        this.router.patch('/profile-photo-update', GlobalMiddleWare.authenticate, upload.single('photo'),
-            GeneralController.profilePhotoUpdate);
+        // this.router.patch('/profile-photo-update', GlobalMiddleWare.authenticate, upload.single('photo'),
+        //     GeneralController.profilePhotoUpdate);
     }
     deleteRoutes() {
 

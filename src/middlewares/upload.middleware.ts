@@ -1,16 +1,61 @@
+// import * as multer from 'multer';
+// import { Constants } from "../shared/constants";
+
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, "uploads/profile_photos/"); // Save to profile_photos folder
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, `${Date.now()}-${file.originalname}`);
+//     }
+// });
+
+// export const upload = multer({
+//     storage: storage,
+//     limits: { fileSize: Constants.MAX_FILE_SIZE }
+// });
+
+import { Request, Response, NextFunction } from "express";
 import * as multer from 'multer';
-import { Constants } from "../shared/constants";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { v4 as uuidv4 } from "uuid";
+import { getEnvironmentVariable } from "../environments/env";
+// import * as dotenv from "dotenv";
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "uploads/profile_photos/"); // Save to profile_photos folder
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
+// dotenv.config();
+
+// Multer setup to store file in memory
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+export const uploadMiddleware = upload.single("file");
+export const uploadMultipleMiddleware = upload.array("files", 10);
+
+export const uploadToS3Middleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded!" });
     }
-});
 
-export const upload = multer({
-    storage: storage,
-    limits: { fileSize: Constants.MAX_FILE_SIZE }
-});
+    const fileKey = `${uuidv4()}-${req.file.originalname}`;
+    const uploadParams = {
+      Bucket: process.env.AWS_BUCKET_NAME!,
+      Key: fileKey,
+      Body: req.file.buffer,
+      ContentType: req.file.mimetype,
+    };
+
+    await getEnvironmentVariable().s3.send(new PutObjectCommand(uploadParams));
+
+    req.body.fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileKey}`;
+    
+    next();
+  } catch (error) {
+    console.error("S3 Upload Error:", error);
+    res.status(500).json({ message: "File upload failed!", error });
+  }
+};

@@ -15,6 +15,7 @@ import { Department } from "../models/department.entity";
 import { Designation } from "../models/designation.entity";
 import { Country } from "../models/Country.entity";
 import { State } from "../models/State.entity";
+import { S3Client } from "@aws-sdk/client-s3";
 
 dotenv.config();
 export const DevEnvironment: Environment = {
@@ -49,4 +50,11 @@ export const DevEnvironment: Environment = {
     migrations: [],
   }),
   jwt_secret: "dev_secret",
+  s3: new S3Client({
+    region: process.env.AWS_REGION!,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    },
+  }),
 };
