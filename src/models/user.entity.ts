@@ -7,6 +7,7 @@ import { Department } from './department.entity';
 import { Designation } from './designation.entity';
 import { Country } from './Country.entity';
 import { State } from './State.entity';
+import { Photo } from './photo.entity';
 
 @Entity('users')
 @Unique(['country_code', 'phone'])
@@ -155,6 +156,9 @@ export class User extends BaseEntity {
   //   const { password, verification_token, verification_token_time, ...user } = this;
   //   return user;
   // }
+  @OneToMany(() => Photo, photo => photo.user)
+  photos: Photo[];
+  
   toJSON() {
     const { password, verification_token, verification_token_time, ...user } = this;
     const baseUrl = process.env.BASE_URL || "http://localhost:3000";
