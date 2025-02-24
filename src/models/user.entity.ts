@@ -66,6 +66,12 @@ export class User extends BaseEntity {
   name: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
+  occupation: string;
+  
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  education: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
   first_name: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })

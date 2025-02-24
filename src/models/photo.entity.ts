@@ -18,4 +18,8 @@ export class Photo extends BaseEntity {
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
+
+  // toJSON() {
+     
+  // }
 }

@@ -29,12 +29,13 @@ export class UserRouter {
         this.router.post('/add-financial-detail', GlobalMiddleWare.authenticate, UserValidators.financialDetail(), GlobalMiddleWare.checkError, GlobalMiddleWare.checkError, UserController.addFinancialDetail);
         // create location update api 
         this.router.post('/update-location', UserValidators.location(), GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.updateLocation);
-        this.router.post('/upload-profile-picture',
-            // GlobalMiddleWare.authenticate,
+        this.router.post('/upload',
+            GlobalMiddleWare.authenticate,
             uploadMiddleware,
             uploadToS3Middleware, 
             UserController.uploadProfilePicture
         );
+        this.router.post('/update-profile', UserValidators.profileUpdate(), GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.updateProfile);
     }
     patchRoutes() {
         this.router.post('/verify', UserValidators.verifyUser(), GlobalMiddleWare.checkError, UserController.verify);

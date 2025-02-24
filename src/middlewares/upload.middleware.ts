@@ -52,6 +52,7 @@ export const uploadToS3Middleware = async (
     await getEnvironmentVariable().s3.send(new PutObjectCommand(uploadParams));
 
     req.body.fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileKey}`;
+    req.body.fileKey = fileKey;
     
     next();
   } catch (error) {
@@ -59,3 +60,41 @@ export const uploadToS3Middleware = async (
     res.status(500).json({ message: "File upload failed!", error });
   }
 };
+export const uploadMultipleToS3Middleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.files || !Array.isArray(req.files)) {
+      return res.status(400).json({ message: "No files uploaded!" });
+    }
+
+    const uploadedFiles = await Promise.all(
+      req.files.map(async (file: Express.Multer.File) => {
+        const fileKey = `${uuidv4()}-${file.originalname}`;
+        const uploadParams = {
+          Bucket: process.env.AWS_BUCKET_NAME!,
+          Key: fileKey,
+          Body: file.buffer,
+          ContentType: file.mimetype,
+        };
+
+        await getEnvironmentVariable().s3.send(new PutObjectCommand(uploadParams));
+
+        return {
+          fileUrl: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileKey}`,
+          fileKey,
+        };
+      })
+    );
+
+    req.body.files = uploadedFiles; // Store the uploaded file URLs in req.body
+
+    next();
+  } catch (error) {
+    console.error("S3 Upload Error:", error);
+    res.status(500).json({ message: "File upload failed!", error });
+  }
+};
+

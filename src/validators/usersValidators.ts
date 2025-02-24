@@ -105,7 +105,7 @@ export class UserValidators {
             }),
         ];
     }
-    
+
     static otp() {
         return [
             body('phone', 'Phone Number is required').isString().custom(async (phone, { req }) => {
@@ -126,6 +126,18 @@ export class UserValidators {
         return [
             body('latitude', 'latitude is Required').isNumeric(),
             body('longitude', 'longitude is Required').isNumeric(),
+        ];
+    }
+    static profileUpdate() {
+        return [
+            body('name', 'Please enter your name').isNumeric(),
+            body('occupation', 'Please enter your occupation').isNumeric(),
+            body('education', 'Please enter your education').isNumeric(),
+            body('bio', 'Please enter your bio').isNumeric(),
+            body('photos', 'Please add atleast 2 photos')
+                .optional()
+                .isArray({min: 2})
+                .custom((value) => value.every((photo) => typeof photo === 'string')),
         ];
     }
 
