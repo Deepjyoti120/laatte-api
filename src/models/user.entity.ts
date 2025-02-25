@@ -22,6 +22,9 @@ export class User extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   is_profile_done: boolean;
 
+  @Column({ type: 'int', default: 60 })
+  radius: number;
+
   @Column({ type: 'enum', enum: Role, nullable: true, default: Role.USER })
   role: Role;
 

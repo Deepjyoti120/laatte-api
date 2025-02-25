@@ -18,6 +18,7 @@ import { State } from "../models/State.entity";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Photo } from "../models/photo.entity";
 import { Prompt } from "../models/prompt.entity";
+import { PromptComment } from "../models/prompt_comment.entity";
 
 dotenv.config();
 export const DevEnvironment: Environment = {
@@ -49,6 +50,7 @@ export const DevEnvironment: Environment = {
       State,
       Photo,
       Prompt,
+      PromptComment,
     ],
     subscribers: [],
     migrations: [],
