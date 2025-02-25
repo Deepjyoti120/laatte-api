@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { PromptComment } from './prompt_comment.entity';
+import { Photo } from './photo.entity';
 
 @Entity('prompts')
 export class Prompt extends BaseEntity {
@@ -16,6 +17,10 @@ export class Prompt extends BaseEntity {
 
   @Column({ type: 'text', nullable: true })
   bg_picture: string;
+
+  @ManyToOne(() => Photo, p => p, { onDelete: 'CASCADE', nullable: true, eager: true })
+  @JoinColumn({ name: 'photo_id' })
+  photo: Photo;
 
   @Column({ type: 'int', default: 0 })
   comment_count: number;
