@@ -376,35 +376,8 @@ export class UserController {
     }
     static async myPrompts(req, res, next) {
         try {
-            const user = await User.findOne({ where: { id: req.user.id } });
-            if (!user) {
-                return ResponseHelper.notFound(res, 'User not found');
-            }
-            const latitude = req.body.latitude || user.latitude;
-            const longitude = req.body.longitude || user.longitude;
-            const radius = req.body.radius || user.radius;
-            if (!latitude || !longitude || !radius) {
-                return ResponseHelper.error(res, 'Latitude, longitude, or radius missing', 400);
-            }
-            const prompts = await Prompt.createQueryBuilder("prompt")
-                .where(`ST_Distance_Sphere(
-                    point(prompt.longitude, prompt.latitude), 
-                    point(:longitude, :latitude)
-                    ) <= :radius`, {
-                    longitude,
-                    latitude,
-                    radius: radius * 1000
-                })
-                .andWhere("prompt.user_id != :userId", { userId: user.id })
-                .getMany();
-            if (prompts.length > 0) {
-                return ResponseHelper.success(res, prompts);
-            }
-            if (prompts) {
-                return ResponseHelper.success(res, prompts);
-            }
-            const newError = new Error('Not Found')
-            return next(newError)
+            const prompts = await Prompt.find({ where: { user: req.user } });
+            return ResponseHelper.success(res, prompts);
         } catch (e) {
             next(e);
         }
