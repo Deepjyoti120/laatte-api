@@ -290,7 +290,7 @@ export class UserController {
                 await queryRunner.manager.save(Photo, photoEntities);
             }
             await queryRunner.commitTransaction();
-            return res.json({ message: 'Profile updated successfully' });
+            return ResponseHelper.success(req, 'Profile updated successfully');
         } catch (e) {
             await queryRunner.rollbackTransaction();
             next(e);
