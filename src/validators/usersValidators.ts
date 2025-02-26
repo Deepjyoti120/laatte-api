@@ -130,10 +130,10 @@ export class UserValidators {
     }
     static profileUpdate() {
         return [
-            body('name', 'Please enter your name').isNumeric(),
-            body('occupation', 'Please enter your occupation').isNumeric(),
-            body('education', 'Please enter your education').isNumeric(),
-            body('bio', 'Please enter your bio').isNumeric(),
+            body('name', 'Please enter your name').isString(),
+            body('occupation', 'Please enter your occupation').isString(),
+            body('education', 'Please enter your education').isString(),
+            body('bio', 'Please enter your bio').isString(),
             body('photos', 'Please add atleast 2 photos')
                 .optional()
                 .isArray({min: 2})

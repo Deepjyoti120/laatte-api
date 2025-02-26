@@ -265,22 +265,27 @@ export class UserController {
         const authuser = req.user as User; // Authenticated user
         const body = req.body;
         const queryRunner = getEnvironmentVariable().db.createQueryRunner();
+        
         await queryRunner.connect();
-        await queryRunner.startTransaction();
+    
         try {
-            const updateData: Partial<User> = {
+            console.log("Starting transaction...");
+            await queryRunner.startTransaction();
+    
+            const updateData = {
                 name: body.name,
                 occupation: body.occupation,
                 education: body.education,
                 bio: body.bio,
             };
+    
             const result = await queryRunner.manager.update(User, authuser.id, updateData);
             if (result.affected === 0) {
                 await queryRunner.rollbackTransaction();
-                return ResponseHelper.error(res, 'User not found', 404);
+                return ResponseHelper.error(res, "User not found", 404);
             }
+    
             if (body.photos && Array.isArray(body.photos)) {
-                // await queryRunner.manager.delete(Photo, { user: { id: authuser.id } });
                 const photoEntities = body.photos.map(photoUrl => {
                     const photo = new Photo();
                     photo.user = authuser;
@@ -289,15 +294,20 @@ export class UserController {
                 });
                 await queryRunner.manager.save(Photo, photoEntities);
             }
+    
             await queryRunner.commitTransaction();
-            return ResponseHelper.success(req, 'Profile updated successfully');
+            return ResponseHelper.success(res, "Profile updated successfully");
+    
         } catch (e) {
-            await queryRunner.rollbackTransaction();
+            if (queryRunner.isTransactionActive) {
+                await queryRunner.rollbackTransaction();
+            }
             next(e);
         } finally {
             await queryRunner.release();
         }
     }
+    
     static async addPrompt(req, res, next) {
         const promptBody = req.body as Prompt;
         try {
