@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany, Index } from 'typeorm';
 import { User } from './user.entity';
 import { PromptComment } from './prompt_comment.entity';
 import { Photo } from './photo.entity';
@@ -14,6 +14,10 @@ export class Prompt extends BaseEntity {
 
   @Column({ type: 'text', nullable: true })
   prompt: string;
+
+  @Column({ type: 'text', array: true, default: '{}' })
+  @Index({ spatial: false })
+  tags: string[];
 
   @Column({ type: 'text', nullable: true })
   bg_picture: string;
@@ -35,7 +39,7 @@ export class Prompt extends BaseEntity {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToMany(() => PromptComment, (comment) => comment.prompt, {eager: true})
+  @OneToMany(() => PromptComment, (comment) => comment.prompt, { eager: true })
   comments: PromptComment[];
 
   @CreateDateColumn({ type: 'timestamp' })

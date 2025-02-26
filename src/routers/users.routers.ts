@@ -16,6 +16,7 @@ export class UserRouter {
     }
     getRoutes() {
         this.router.get('/profile', GlobalMiddleWare.authenticate, UserController.profile);
+        this.router.get('/get-prompts', GlobalMiddleWare.authenticate, UserController.prompts);
         // this.router.get('/financial-detail',  GlobalMiddleWare.authenticate, UserController.financialDetail);
     }
     postRoutes() {
@@ -36,6 +37,8 @@ export class UserRouter {
             UserController.uploadProfilePicture
         );
         this.router.post('/update-profile', UserValidators.profileUpdate(), GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.updateProfile);
+        this.router.post('/add-prompt', UserValidators.addPrompt(), GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.addPrompt);
+        this.router.post('/add-comment', UserValidators.addPromptComment(), GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.addPromptCommment);
     }
     patchRoutes() {
         this.router.post('/verify', UserValidators.verifyUser(), GlobalMiddleWare.checkError, UserController.verify);

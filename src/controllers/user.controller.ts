@@ -9,6 +9,10 @@ import { FinancialDetail } from "../models/FinancialDetail";
 import ResponseHelper from "../services/ResponseHelper";
 import { Utils } from "../shared/utils/utils";
 import { Photo } from "../models/photo.entity";
+import { Prompt } from "../models/prompt.entity";
+import { PromptComment } from "../models/prompt_comment.entity";
+import { Sequelize } from 'sequelize'; // Import Sequelize
+
 export class UserController {
     static async signUp(req, res, next) {
         const error = validationResult(req);
@@ -294,5 +298,80 @@ export class UserController {
             await queryRunner.release();
         }
     }
-    
+    static async addPrompt(req, res, next) {
+        const promptBody = req.body as Prompt;
+        try {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const userId = promptBody.user.id;
+            const existingPrompt = await Prompt.createQueryBuilder("prompt")
+                .where("prompt.user = :userId", { userId })
+                .andWhere("DATE(prompt.created_at) = :today", { today })
+                .getOne();
+            if (existingPrompt) {
+                return ResponseHelper.error(res, "You have already added a prompt today.");
+            }
+            const prompt = new Prompt();
+            prompt.prompt = promptBody.prompt;
+            prompt.bg_picture = promptBody.bg_picture;
+            prompt.latitude = promptBody.latitude;
+            prompt.longitude = promptBody.longitude;
+            prompt.photo = promptBody.photo;
+            prompt.user = promptBody.user;
+            prompt.tags = promptBody.tags;
+            await prompt.save();
+            return ResponseHelper.created(res, prompt);
+        } catch (e) {
+            next(e);
+        }
+    }
+    static async addPromptCommment(req, res, next) {
+        const body = req.body as PromptComment;
+        const authuser = req.user as User;
+        try {
+            const pc = new PromptComment();
+            pc.prompt = body.prompt;
+            pc.comment = body.comment;
+            pc.user = authuser;
+            await pc.save();
+            return ResponseHelper.created(res, prompt);
+        } catch (e) {
+            next(e);
+        }
+    }
+    static async prompts(req, res, next) {
+        try {
+            const user = await User.findOne({ where: { id: req.user.id } });
+            if (!user) {
+                return ResponseHelper.notFound(res, 'User not found');
+            }
+            const latitude = req.body.latitude || user.latitude;
+            const longitude = req.body.longitude || user.longitude;
+            const radius = req.body.radius || user.radius;
+            if (!latitude || !longitude || !radius) {
+                return ResponseHelper.error(res, 'Latitude, longitude, or radius missing', 400);
+            }
+            const prompts = await Prompt.createQueryBuilder("prompt")
+                .where(`ST_Distance_Sphere(
+                    point(prompt.longitude, prompt.latitude), 
+                    point(:longitude, :latitude)
+                    ) <= :radius`, {
+                    longitude,
+                    latitude,
+                    radius: radius * 1000
+                })
+                .andWhere("prompt.user_id != :userId", { userId: user.id })
+                .getMany();
+            if (prompts.length > 0) {
+                return ResponseHelper.success(res, prompts);
+            }
+            if (prompts) {
+                return ResponseHelper.success(res, prompts);
+            }
+            const newError = new Error('Not Found')
+            return next(newError)
+        } catch (e) {
+            next(e);
+        }
+    }
 }
