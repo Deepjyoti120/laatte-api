@@ -17,6 +17,7 @@ export class UserRouter {
     getRoutes() {
         this.router.get('/profile', GlobalMiddleWare.authenticate, UserController.profile);
         this.router.get('/get-prompts', GlobalMiddleWare.authenticate, UserController.prompts);
+        this.router.get('/get-my-prompts', GlobalMiddleWare.authenticate, UserController.myPrompts);
         // this.router.get('/financial-detail',  GlobalMiddleWare.authenticate, UserController.financialDetail);
     }
     postRoutes() {
