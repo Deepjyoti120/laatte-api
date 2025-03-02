@@ -265,26 +265,21 @@ export class UserController {
         const authuser = req.user as User; // Authenticated user
         const body = req.body;
         const queryRunner = getEnvironmentVariable().db.createQueryRunner();
-        
         await queryRunner.connect();
-    
         try {
-            console.log("Starting transaction...");
             await queryRunner.startTransaction();
-    
             const updateData = {
                 name: body.name,
                 occupation: body.occupation,
                 education: body.education,
                 bio: body.bio,
+                is_profile_done: true,
             };
-    
             const result = await queryRunner.manager.update(User, authuser.id, updateData);
             if (result.affected === 0) {
                 await queryRunner.rollbackTransaction();
                 return ResponseHelper.error(res, "User not found", 404);
             }
-    
             if (body.photos && Array.isArray(body.photos)) {
                 const photoEntities = body.photos.map(photoUrl => {
                     const photo = new Photo();
@@ -294,10 +289,8 @@ export class UserController {
                 });
                 await queryRunner.manager.save(Photo, photoEntities);
             }
-    
             await queryRunner.commitTransaction();
             return ResponseHelper.success(res, "Profile updated successfully");
-    
         } catch (e) {
             if (queryRunner.isTransactionActive) {
                 await queryRunner.rollbackTransaction();
@@ -307,7 +300,7 @@ export class UserController {
             await queryRunner.release();
         }
     }
-    
+
     static async addPrompt(req, res, next) {
         const promptBody = req.body as Prompt;
         try {
@@ -358,20 +351,24 @@ export class UserController {
             const latitude = req.body.latitude || user.latitude;
             const longitude = req.body.longitude || user.longitude;
             const radius = req.body.radius || user.radius;
+            console.log(latitude);
+            console.log(longitude);
+            console.log(radius);
             if (!latitude || !longitude || !radius) {
                 return ResponseHelper.error(res, 'Latitude, longitude, or radius missing', 400);
             }
             const prompts = await Prompt.createQueryBuilder("prompt")
-                .where(`ST_Distance_Sphere(
-                    point(prompt.longitude, prompt.latitude), 
-                    point(:longitude, :latitude)
-                    ) <= :radius`, {
+                .where(`ST_DistanceSphere(
+                        ST_MakePoint(prompt.longitude, prompt.latitude), 
+                        ST_MakePoint(:longitude, :latitude)
+                        ) <= :radius`, {
                     longitude,
                     latitude,
                     radius: radius * 1000
                 })
                 .andWhere("prompt.user_id != :userId", { userId: user.id })
                 .getMany();
+
             if (prompts.length > 0) {
                 return ResponseHelper.success(res, prompts);
             }

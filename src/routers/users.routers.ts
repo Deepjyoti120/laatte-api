@@ -34,12 +34,12 @@ export class UserRouter {
         this.router.post('/upload',
             GlobalMiddleWare.authenticate,
             uploadMiddleware,
-            uploadToS3Middleware, 
+            uploadToS3Middleware,
             UserController.uploadProfilePicture
         );
         this.router.post('/update-profile', UserValidators.profileUpdate(), GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.updateProfile);
-        this.router.post('/add-prompt', UserValidators.addPrompt(), GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.addPrompt);
-        this.router.post('/add-comment', UserValidators.addPromptComment(), GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.addPromptCommment);
+        this.router.post('/add-prompt', GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.addPrompt);
+        this.router.post('/add-comment', GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.addPromptCommment);
     }
     patchRoutes() {
         this.router.post('/verify', UserValidators.verifyUser(), GlobalMiddleWare.checkError, UserController.verify);

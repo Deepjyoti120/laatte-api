@@ -140,15 +140,15 @@ export class UserValidators {
                 .custom((value) => value.every((photo) => typeof photo === 'string')),
         ];
     }
-    static addPrompt() {
-        return [
-            body('name', 'Please enter your name').isNumeric(),
-        ];
-    }
-    static addPromptComment() {
-        return [
-            body('name', 'Please enter your name').isNumeric(),
-        ];
-    }
+    // static addPrompt() {
+    //     return [
+    //         body('name', 'Please enter your name').isNumeric(),
+    //     ];
+    // }
+    // static addPromptComment() {
+    //     return [
+    //         body('comment', 'Please enter your comment').isNumeric(),
+    //     ];
+    // }
 
 }
