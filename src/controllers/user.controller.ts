@@ -303,10 +303,11 @@ export class UserController {
 
     static async addPrompt(req, res, next) {
         const promptBody = req.body as Prompt;
+        const authuser = req.user as User;
         try {
             const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const userId = promptBody.user.id;
+            today.setHours(0, 0, 0, 0); 
+            const userId = authuser.id;
             const existingPrompt = await Prompt.createQueryBuilder("prompt")
                 .where("prompt.user = :userId", { userId })
                 .andWhere("DATE(prompt.created_at) = :today", { today })
@@ -320,7 +321,7 @@ export class UserController {
             prompt.latitude = promptBody.latitude;
             prompt.longitude = promptBody.longitude;
             prompt.photo = promptBody.photo;
-            prompt.user = promptBody.user;
+            prompt.user = authuser;
             prompt.tags = promptBody.tags;
             await prompt.save();
             return ResponseHelper.created(res, prompt);
