@@ -1,9 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, JoinColumn, BaseEntity } from 'typeorm';
 import { Chat } from './chat.entity';
 import { User } from './user.entity';
 
 @Entity('messages')
-export class Message {
+export class Message extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

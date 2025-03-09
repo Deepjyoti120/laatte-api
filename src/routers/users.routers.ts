@@ -22,7 +22,7 @@ export class UserRouter {
         // this.router.get('/financial-detail',  GlobalMiddleWare.authenticate, UserController.financialDetail);
         // Chat routes
         this.router.get('/chats', GlobalMiddleWare.authenticate, ChatController.getChats);
-        // this.router.get('/chat/:chatId', GlobalMiddleWare.authenticate, ChatController.getChatMessages);
+        this.router.get('/chat/:chatId', GlobalMiddleWare.authenticate, ChatController.getChatMessages);
     }
     postRoutes() {
         // this.router.post('/create-account', UserValidators.signUp(),GlobalMiddleWare.checkError, UserController.signUp);
@@ -46,13 +46,13 @@ export class UserRouter {
         this.router.post('/add-comment', GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.addPromptCommment);
          // Chat routes
         this.router.post('/chat/start', GlobalMiddleWare.authenticate, ChatController.startChat);
-        //  this.router.post('/chat/:chatId/send', GlobalMiddleWare.authenticate, ChatController.sendMessage);
+        this.router.post('/chat/send', GlobalMiddleWare.authenticate, ChatController.sendMessage);
     }
     patchRoutes() {
         this.router.post('/verify', UserValidators.verifyUser(), GlobalMiddleWare.checkError, UserController.verify);
     }
     deleteRoutes() {
-        // this.router.delete('/chat/:chatId', GlobalMiddleWare.authenticate, ChatController.deleteChat);
+        this.router.delete('/chat/:chatId', GlobalMiddleWare.authenticate, ChatController.deleteChat);
     }
 }
 export default new UserRouter().router;
