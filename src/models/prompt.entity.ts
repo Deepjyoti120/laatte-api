@@ -48,4 +48,10 @@ export class Prompt extends BaseEntity {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 
+  toJSON() {
+    const { ...prompt } = this;
+    prompt.bg_picture = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${prompt.bg_picture}`;
+    return prompt;
+  }
+
 }

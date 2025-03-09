@@ -8,6 +8,7 @@ import { Designation } from './designation.entity';
 import { Country } from './Country.entity';
 import { State } from './State.entity';
 import { Photo } from './photo.entity';
+import { Chat } from './chat.entity';
 
 @Entity('users')
 @Unique(['country_code', 'phone'])
@@ -28,10 +29,10 @@ export class User extends BaseEntity {
   @Column({ type: 'enum', enum: Role, nullable: true, default: Role.USER })
   role: Role;
 
-  @Column({ type: 'varchar', length: 255, unique: true , nullable: true })
+  @Column({ type: 'varchar', length: 255, unique: true, nullable: true })
   email: string;
 
-  @Column({ type: 'varchar', length: 255 , nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   password: string;
 
   // device_name
@@ -70,7 +71,7 @@ export class User extends BaseEntity {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   occupation: string;
-  
+
   @Column({ type: 'varchar', length: 255, nullable: true })
   education: string;
 
@@ -167,13 +168,20 @@ export class User extends BaseEntity {
   // }
   @OneToMany(() => Photo, photo => photo.user)
   photos: Photo[];
-  
+
+  @OneToMany(() => Chat, chat => chat.user1)
+  chats1: Chat[];
+
+  @OneToMany(() => Chat, chat => chat.user2)
+  chats2: Chat[];
+
+
   toJSON() {
     const { password, verification_token, verification_token_time, ...user } = this;
     const baseUrl = process.env.BASE_URL || "http://localhost:3000";
-    user.profile_picture = user.profile_picture 
-        ? `${baseUrl}/${user.profile_picture}`
-        : "https://cdn-icons-png.flaticon.com/512/9203/9203764.png";
+    user.profile_picture = user.profile_picture
+      ? `${baseUrl}/${user.profile_picture}`
+      : "https://cdn-icons-png.flaticon.com/512/9203/9203764.png";
     return user;
   }
 

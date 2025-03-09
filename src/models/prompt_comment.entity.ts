@@ -14,7 +14,7 @@ export class PromptComment extends BaseEntity {
   @ManyToOne(() => Prompt, (prompt) => prompt.comments, { onDelete: 'CASCADE'})
   prompt: Prompt;
 
-  @ManyToOne(() => User, user => user, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, user => user, { onDelete: 'CASCADE', eager: true })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
@@ -23,5 +23,4 @@ export class PromptComment extends BaseEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
-
 }

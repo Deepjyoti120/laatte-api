@@ -5,6 +5,7 @@ import { UserValidators } from "../validators/usersValidators";
 import { GlobalMiddleWare } from "../middlewares/global.middleware";
 import bodyParser = require('body-parser');
 import { uploadMiddleware, uploadToS3Middleware } from "../middlewares/upload.middleware";
+import { ChatController } from "../controllers/chat.controller";
 export class UserRouter {
     public router: Router;
     constructor() {
@@ -19,6 +20,9 @@ export class UserRouter {
         this.router.get('/get-prompts', GlobalMiddleWare.authenticate, UserController.prompts);
         this.router.get('/get-my-prompts', GlobalMiddleWare.authenticate, UserController.myPrompts);
         // this.router.get('/financial-detail',  GlobalMiddleWare.authenticate, UserController.financialDetail);
+        // Chat routes
+        this.router.get('/chats', GlobalMiddleWare.authenticate, ChatController.getChats);
+        // this.router.get('/chat/:chatId', GlobalMiddleWare.authenticate, ChatController.getChatMessages);
     }
     postRoutes() {
         // this.router.post('/create-account', UserValidators.signUp(),GlobalMiddleWare.checkError, UserController.signUp);
@@ -40,12 +44,15 @@ export class UserRouter {
         this.router.post('/update-profile', UserValidators.profileUpdate(), GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.updateProfile);
         this.router.post('/add-prompt', GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.addPrompt);
         this.router.post('/add-comment', GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.addPromptCommment);
+         // Chat routes
+        this.router.post('/chat/start', GlobalMiddleWare.authenticate, ChatController.startChat);
+        //  this.router.post('/chat/:chatId/send', GlobalMiddleWare.authenticate, ChatController.sendMessage);
     }
     patchRoutes() {
         this.router.post('/verify', UserValidators.verifyUser(), GlobalMiddleWare.checkError, UserController.verify);
     }
     deleteRoutes() {
-
+        // this.router.delete('/chat/:chatId', GlobalMiddleWare.authenticate, ChatController.deleteChat);
     }
 }
 export default new UserRouter().router;
