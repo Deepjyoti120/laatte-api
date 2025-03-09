@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import { ChatService } from "../services/ChatService";
+import ResponseHelper from "../services/ResponseHelper";
 
 export class ChatController {
-    static async getChats(req, res: Response) {
+    static async getChats(req, res: Response, next) {
         try {
             const chats = await ChatService.getChats(req.user.id);
-            res.status(200).json({ success: true, chats });
-        } catch (error) {
-            res.status(500).json({ success: false, message: error.message });
+            return ResponseHelper.success(res, chats);
+        } catch (e) {
+            next(e);
         }
     }
     static async startChat(req, res: Response) {
@@ -30,12 +31,15 @@ export class ChatController {
 
     static async getChatMessages(req: Request, res: Response) {
         try {
-            const messages = await ChatService.getMessages(req.params.chatId);
+            const chatId = req.params.chatId;
+            const messages = await ChatService.getMessages(chatId);
+            req.app.get("io").to(chatId).emit("chatHistory", messages);
             res.status(200).json({ success: true, messages });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
     }
+    
 
     static async deleteChat(req: Request, res: Response) {
         try {

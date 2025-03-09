@@ -5,10 +5,25 @@ import { User } from "../models/user.entity";
 
 export class ChatService {
 
-    static async getChats(userId: User) {
-        return await Chat.find({ where: [{ user1: userId }, { user2: userId }] });
+    static async getChats(userId: string) {
+        const chats = await Chat.find({
+            where: [
+                { user1: { id: userId } },
+                { user2: { id: userId } }
+            ],
+            relations: ['user1', 'user2'],
+            order: { updated_at: 'DESC' }
+        });
+        return chats.map(chat => {
+            const otherUser = chat.user1.id === userId ? chat.user2 : chat.user1;
+            return {
+                id: chat.id,
+                created_at: chat.created_at,
+                updated_at: chat.updated_at,
+                user: otherUser
+            };
+        });
     }
-
 
     static async startChat(user1Id: User, user2Id: User) {
         let chat = await Chat.createQueryBuilder("chat")
@@ -55,5 +70,6 @@ export class ChatService {
 
     static async deleteChat(chatId: string) {
         return await Chat.delete({ id: chatId });
-    }
+    } 
+    
 }

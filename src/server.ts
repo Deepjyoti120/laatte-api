@@ -10,6 +10,7 @@ import * as path from 'path';
 import { createServer, Server as HttpServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
 import { createClient } from 'redis';
+import { ChatService } from './services/ChatService';
 
 export class Server {
     public app: express.Application = express();
@@ -85,23 +86,59 @@ export class Server {
         // this.app.use('/api/excel', ExcelRouter);
         // this.app.use('/api/pdf', PDFRouter);
     }
+    // setupWebSocket() {
+    //     this.io.on("connection", (socket) => {
+    //         console.log("New WebSocket connection:", socket.id);
+    //         socket.on("message", (data) => {
+    //             console.log("Received:", data);
+    //             // socket.broadcast.emit("message", data);
+    //             this.redisPublisher.publish("message", JSON.stringify(data));
+    //         });
+    //         socket.on("disconnect", () => {
+    //             console.log("User disconnected:", socket.id);
+    //         });
+    //         this.redisSubscriber.subscribe("message", (message) => {
+    //             console.log("Broadcasting redisSubscriber message:", message);
+    //             this.io.emit("message", JSON.parse(message)); 
+    //         });
+    //     });
+    // }
     setupWebSocket() {
         this.io.on("connection", (socket) => {
             console.log("New WebSocket connection:", socket.id);
-            socket.on("message", (data) => {
-                console.log("Received:", data);
-                // socket.broadcast.emit("message", data);
-                this.redisPublisher.publish("message", JSON.stringify(data));
+    
+            // Handle joining a chat room
+            socket.on("joinChat", (chatId) => {
+                socket.join(chatId);
+                console.log(`User joined chat: ${chatId}`);
             });
+    
+            // Handle sending messages
+            socket.on("sendMessage", async (messageData) => {
+                const { chatId, senderId, message } = messageData;
+                
+                // Save message in DB
+                const newMessage = await ChatService.sendMessage(chatId, senderId, message);
+                
+                // Emit to all users in the chat room
+                this.io.to(chatId).emit("newMessage", newMessage);
+    
+                // Publish message to Redis for scalability
+                this.redisPublisher.publish("chatMessages", JSON.stringify(newMessage));
+            });
+    
+            // Subscribe to Redis channel for distributed WebSocket events
+            this.redisSubscriber.subscribe("chatMessages", (message) => {
+                const parsedMessage = JSON.parse(message);
+                this.io.to(parsedMessage.chatId).emit("newMessage", parsedMessage);
+            });
+    
             socket.on("disconnect", () => {
                 console.log("User disconnected:", socket.id);
             });
-            this.redisSubscriber.subscribe("message", (message) => {
-                console.log("Broadcasting redisSubscriber message:", message);
-                this.io.emit("message", JSON.parse(message)); 
-            });
         });
     }
+    
     error404Handler() {
         this.app.use((req, res) => {
             res.status(404).json({
