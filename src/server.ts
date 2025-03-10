@@ -120,15 +120,18 @@ export class Server {
                 try {
                     const newMessage = await ChatService.sendMessage(data.chatId, data.senderId, data.message);
                     // this.io.to(data.chatId).emit("newMessage", newMessage);
-                    this.redisPublisher.publish("newMessage", JSON.stringify(data));
+                    this.io.emit("newMessage", data);
+                    // this.redisPublisher.publish("newMessage", JSON.stringify(data));
                 } catch (error) {
                     console.error("Error handling message:", error);
                 }
             });
-            this.redisSubscriber.subscribe("newMessage", (message) => {
-                console.log("Broadcasting redisSubscriber message:", message);
-                this.io.emit("newMessage", JSON.parse(message));
-            });
+            // this.redisSubscriber.subscribe("newMessage", (message) => {
+            //     console.log("Broadcasting redisSubscriber message:", JSON.parse(message));
+            //     console.log("message.chatId:", JSON.parse(message).chatId);
+            //     // this.io.to(message.chatId).emit("newMessage", JSON.parse(message));
+            //     this.io.emit("newMessage", JSON.parse(message));
+            // });
             socket.on("disconnect", () => {
                 console.log("User disconnected:", socket.id);
             });
