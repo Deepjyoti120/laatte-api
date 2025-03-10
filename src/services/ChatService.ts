@@ -4,14 +4,13 @@ import { Message } from "../models/message.entity";
 import { User } from "../models/user.entity";
 
 export class ChatService {
-
     static async getChats(userId: string) {
         const chats = await Chat.find({
             where: [
                 { user1: { id: userId } },
                 { user2: { id: userId } }
             ],
-            relations: ['user1', 'user2'],
+            relations: ['user1', 'user2', 'lastMessage'],
             order: { updated_at: 'DESC' }
         });
         return chats.map(chat => {
@@ -20,7 +19,8 @@ export class ChatService {
                 id: chat.id,
                 created_at: chat.created_at,
                 updated_at: chat.updated_at,
-                user: otherUser
+                user: otherUser,
+                lastMessage: chat.lastMessage,
             };
         });
     }
@@ -44,23 +44,32 @@ export class ChatService {
     static async sendMessage(chatId: string, senderId: string, content: string) {
         try {
             if (!chatId || !senderId || !content.trim()) {
+                console.log(chatId,senderId,content);
                 throw new Error("chatId, senderId, and content are required.");
             }
+    
             const chat = await Chat.findOne({ where: { id: chatId } });
             if (!chat) {
                 throw new Error("Chat not found.");
             }
+    
             const sender = await User.findOne({ where: { id: senderId } });
             if (!sender) {
                 throw new Error("Sender not found.");
             }
+    
             const message = Message.create({ chat, sender, content });
             await message.save();
+    
+            chat.lastMessage = message;
+            await chat.save();
+    
             return message;
         } catch (error) {
             throw new Error(`Failed to send message: ${error.message}`);
         }
     }
+    
     
     
 

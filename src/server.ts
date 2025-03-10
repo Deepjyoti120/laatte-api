@@ -103,42 +103,39 @@ export class Server {
     //         });
     //     });
     // }
+    // server.ts
     setupWebSocket() {
         this.io.on("connection", (socket) => {
             console.log("New WebSocket connection:", socket.id);
-    
-            // Handle joining a chat room
-            socket.on("joinChat", (chatId) => {
+
+            socket.on("joinChat", (data) => {
+                const chatId = data.chatId;
                 socket.join(chatId);
                 console.log(`User joined chat: ${chatId}`);
             });
-    
-            // Handle sending messages
+
             socket.on("sendMessage", async (messageData) => {
-                const { chatId, senderId, message } = messageData;
-                
-                // Save message in DB
-                const newMessage = await ChatService.sendMessage(chatId, senderId, message);
-                
-                // Emit to all users in the chat room
-                this.io.to(chatId).emit("newMessage", newMessage);
-    
-                // Publish message to Redis for scalability
-                this.redisPublisher.publish("chatMessages", JSON.stringify(newMessage));
+                console.log("Received message:", messageData);
+                const data = messageData;
+                try {
+                    const newMessage = await ChatService.sendMessage(data.chatId, data.senderId, data.message);
+                    // this.io.to(data.chatId).emit("newMessage", newMessage);
+                    this.redisPublisher.publish("newMessage", JSON.stringify(data));
+                } catch (error) {
+                    console.error("Error handling message:", error);
+                }
             });
-    
-            // Subscribe to Redis channel for distributed WebSocket events
-            this.redisSubscriber.subscribe("chatMessages", (message) => {
-                const parsedMessage = JSON.parse(message);
-                this.io.to(parsedMessage.chatId).emit("newMessage", parsedMessage);
+            this.redisSubscriber.subscribe("newMessage", (message) => {
+                console.log("Broadcasting redisSubscriber message:", message);
+                this.io.emit("newMessage", JSON.parse(message));
             });
-    
             socket.on("disconnect", () => {
                 console.log("User disconnected:", socket.id);
             });
         });
     }
-    
+
+
     error404Handler() {
         this.app.use((req, res) => {
             res.status(404).json({

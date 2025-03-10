@@ -18,6 +18,10 @@ export class Chat extends BaseEntity {
   @OneToMany(() => Message, message => message.chat)
   messages: Message[];
 
+  @ManyToOne(() => Message, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'last_message_id' })
+  lastMessage: Message;
+
   @CreateDateColumn()
   created_at: Date;
 
