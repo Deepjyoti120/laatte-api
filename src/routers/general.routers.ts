@@ -12,8 +12,6 @@ export class GeneralRouter {
         this.deleteRoutes();
     }
     getRoutes() {
-        this.router.get('/basic-info', GlobalMiddleWare.authenticate, GeneralController.basicInfo);
-        this.router.get('/role-permissions', GlobalMiddleWare.authenticate, GeneralController.rolePermissions);
     }
     postRoutes() {
         // this.router.post('/add-module', UserValidators.signUp(), GlobalMiddleWare.checkError, UserController.signUp);

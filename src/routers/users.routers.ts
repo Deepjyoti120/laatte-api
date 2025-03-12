@@ -32,7 +32,6 @@ export class UserRouter {
         // this.router.post('/signup', UserValidators.signUp(),GlobalMiddleWare.checkError, UserController.signUp);
         this.router.post('/forgot-password', UserValidators.forgotPassword(), GlobalMiddleWare.checkError, UserController.forgotPassword);
         this.router.post('/reset-password', UserValidators.resetPassword(), GlobalMiddleWare.checkError, UserController.resetPassword);
-        this.router.post('/add-financial-detail', GlobalMiddleWare.authenticate, UserValidators.financialDetail(), GlobalMiddleWare.checkError, GlobalMiddleWare.checkError, UserController.addFinancialDetail);
         // create location update api 
         this.router.post('/update-location', UserValidators.location(), GlobalMiddleWare.authenticate, GlobalMiddleWare.checkError, UserController.updateLocation);
         this.router.post('/upload',

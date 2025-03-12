@@ -5,7 +5,6 @@ import * as jwt from 'jsonwebtoken';
 import { getEnvironmentVariable } from "../environments/env";
 import { User } from "../models/user.entity";
 import { env } from "process";
-import { FinancialDetail } from "../models/FinancialDetail";
 import ResponseHelper from "../services/ResponseHelper";
 import { Utils } from "../shared/utils/utils";
 import { Photo } from "../models/photo.entity";
@@ -41,16 +40,12 @@ export class UserController {
             // user.verification_token = Utils.generateVerificationToken();
             // user.verification_token_time = Date.now() + new Utils().MAX_TOKEN_TIME;
             user.phone = userbody.phone;
-            user.designation = userbody.designation;
-            user.department = userbody.department;
             user.dob = userbody.dob;
             user.gender = userbody.gender;
             user.doj = userbody.doj;
             user.address = userbody.address;
             user.pincode = userbody.pincode;
             user.city = userbody.city;
-            user.state = userbody.state;
-            user.country = userbody.country;
             await user.save();
             return ResponseHelper.created(res, user);
         } catch (e) {
@@ -189,24 +184,6 @@ export class UserController {
             const user = await User.findOne({ where: { email } });
             if (user) {
                 return res.json(user);
-            }
-        } catch (e) {
-            next(e);
-        }
-    }
-    static async addFinancialDetail(req, res, next) {
-        const user = req.user as User;
-        const financialBody = req.body;
-        try {
-            if (user) {
-                const financialDetail = new FinancialDetail();
-                financialDetail.bank_name = financialBody.bank_name;
-                financialDetail.bank_account_number = financialBody.bank_account_number;
-                financialDetail.bank_account_name = financialBody.bank_account_name;
-                financialDetail.user = financialBody.user;
-                financialDetail.created_by = user;
-                await financialDetail.save();
-                return res.json(financialDetail);
             }
         } catch (e) {
             next(e);

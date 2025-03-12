@@ -48,7 +48,6 @@ export class EmployeeController {
                     { is_active: true, email: Like(`%${search}%`) },
                     { is_active: true, phone: Like(`%${search}%`) },
                     { is_active: true, username: Like(`%${search}%`) },
-                    { is_active: true, designation: Like(`%${search}%`) },
                 ],
                 cache: { id: 'user_search_cache', milliseconds: 60000 },
                 skip: (Number(page) - 1) * Number(limit),
@@ -92,16 +91,12 @@ export class EmployeeController {
             // user.verification_token = Utils.generateVerificationToken();
             // user.verification_token_time = Date.now() + new Utils().MAX_TOKEN_TIME;
             user.phone = userbody.phone;
-            user.designation = userbody.designation;
-            user.department = userbody.department;
             user.dob = userbody.dob;
             user.gender = userbody.gender;
             user.doj = userbody.doj;
             user.address = userbody.address;
             user.pincode = userbody.pincode;
             user.city = userbody.city;
-            user.state = userbody.state;
-            user.country = userbody.country;
             await user.save();
             return ResponseHelper.created(res, user);
         } catch (e) {

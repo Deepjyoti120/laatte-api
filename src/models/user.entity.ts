@@ -1,12 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, BaseEntity, OneToMany, ManyToOne, JoinColumn, OneToOne, Unique, Check } from 'typeorm';
-import { Document } from './Document';
-import { FinancialDetail } from './FinancialDetail';
 import { Role } from '../shared/enums/role.enums';
 import { GenderType } from '../shared/enums/gender-type.enums';
-import { Department } from './department.entity';
-import { Designation } from './designation.entity';
-import { Country } from './Country.entity';
-import { State } from './State.entity';
 import { Photo } from './photo.entity';
 import { Chat } from './chat.entity';
 
@@ -90,19 +84,6 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 20, nullable: true })
   phone: string;
 
-  // @Column({ type: 'varchar', length: 100, nullable: true })
-  // designation: string;
-
-  // @Column({ type: 'varchar', length: 255, nullable: true })
-  // department: string;
-  @ManyToOne(() => Department, department => department.users, { nullable: true })
-  @JoinColumn({ name: 'department_id' })
-  department: Department;
-
-  @ManyToOne(() => Designation, designation => designation.users, { nullable: true, eager: true })
-  @JoinColumn({ name: 'designation_id' })
-  designation: Designation;
-
   @Column({ type: 'date', nullable: true })
   dob: Date;
 
@@ -126,22 +107,9 @@ export class User extends BaseEntity {
 
   // @Column({ type: 'varchar', length: 255, nullable: true, default: 'India' })
   // country: string;
-  @ManyToOne(() => Country, country => country.users, { nullable: true })
-  @JoinColumn({ name: 'country_id' })
-  country: Country;
-
-  @ManyToOne(() => State, state => state.users, { nullable: true })
-  @JoinColumn({ name: 'state_id' })
-  state: State;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   emergency_contact: string;
-
-  @OneToMany(() => Document, documents => documents.user)
-  documents: Document[];
-
-  @OneToOne(() => FinancialDetail, financialDetail => financialDetail.user)
-  financial_detail: FinancialDetail;
 
   @Column({ type: 'text', nullable: true })
   fcm_token: string;

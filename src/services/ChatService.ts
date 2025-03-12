@@ -74,7 +74,7 @@ export class ChatService {
     
 
     static async getMessages(chatId: string) { 
-        return await Message.find({ where: { chat: { id: chatId } }, order: { created_at: "ASC" } });
+        return await Message.find({ where: { chat: { id: chatId } },relations: ['sender'], order: { created_at: "ASC" } });
     }
 
     static async deleteChat(chatId: string) {

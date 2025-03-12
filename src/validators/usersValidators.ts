@@ -1,7 +1,6 @@
 import { body, query } from "express-validator";
 import { DataSource, getRepository } from 'typeorm';
 import { User } from "../models/user.entity";
-import { FinancialDetail } from "../models/FinancialDetail";
 
 export class UserValidators {
     // static login() {
@@ -76,23 +75,6 @@ export class UserValidators {
             .withMessage('Password must be between 8 and 20 characters')];
     }
 
-    static financialDetail() {
-        return [
-            body('bank_name', 'bank_name is Required').isString(),
-            body('bank_account_number', 'bank_account_number is Required').isNumeric(),
-            body('bank_account_name', 'bank_account_name is Required').isString(),
-            body('user', 'Employee id is required').isUUID().custom((userId, { req }) => {
-                return FinancialDetail.findOne({ where: { user: { id: userId } } }).then(fd => {
-                    if (fd) {
-                        throw new Error('Financial Detail Already Exist');
-                    } else {
-                        return true;
-                    }
-                });
-            }
-            ),
-        ]
-    }
     static otpRequest() {
         return [
             body('phone', 'Phone Number is required').isString().custom(async (phone, { req }) => {

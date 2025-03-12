@@ -1,20 +1,7 @@
 import { DataSource } from "typeorm";
 import { Environment } from "./env";
 import { User } from "../models/user.entity";
-import { Salary } from "../models/Salary";
-import { GeneratedSalary } from "../models/GeneratedSalary";
-import { Document } from "../models/Document";
-import { Attendance } from "../models/Attendance";
-import { Shift } from "../models/Shift";
-import { FinancialDetail } from "../models/FinancialDetail";
 import * as dotenv from "dotenv";
-import { RolePermission } from "../models/role-permissions.entity";
-import { Feature } from "../models/feature.entity";
-import { Module } from "../models/module.entity";
-import { Department } from "../models/department.entity";
-import { Designation } from "../models/designation.entity";
-import { Country } from "../models/Country.entity";
-import { State } from "../models/State.entity";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Photo } from "../models/photo.entity";
 import { Prompt } from "../models/prompt.entity";
@@ -37,19 +24,6 @@ export const DevEnvironment: Environment = {
     logger: "file",
     entities: [
       User,
-      Salary,
-      GeneratedSalary,
-      Document,
-      Shift,
-      Attendance,
-      FinancialDetail,
-      RolePermission,
-      Module,
-      Feature,
-      Department,
-      Designation,
-      Country,
-      State,
       Photo,
       Prompt,
       PromptComment,
