@@ -11,12 +11,18 @@ import { Message } from "../models/message.entity";
 dotenv.config();
 export const ProdEnvironment: Environment = {
   db: new DataSource({
-    type: "postgres",
-    host: "localhost",
-    port: 5432,
-    username: "postgres",
-    password: "1234",
-    database: "laatte",
+    // type: "postgres",
+    // host: "localhost",
+    // port: 5432,
+    // username: "postgres",
+    // password: "1234",
+    // database: "laatte",
+    type: process.env.DB_TYPE as "postgres",
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT || "5432", 10),
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
     synchronize: false,
     logging: true,
     entities: [
