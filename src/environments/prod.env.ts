@@ -17,7 +17,7 @@ export const ProdEnvironment: Environment = {
     username: "postgres",
     password: "1234",
     database: "laatte",
-    synchronize: true,
+    synchronize: false,
     logging: true,
     entities: [
       User,
