@@ -19,7 +19,9 @@ export class Photo extends BaseEntity {
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 
-  // toJSON() {
-     
-  // }
+  toJSON() {
+    const { ...photos } = this;
+    photos.url = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${photos.url}`;
+    return photos;
+  }
 }

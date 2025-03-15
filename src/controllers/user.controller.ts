@@ -283,7 +283,7 @@ export class UserController {
         const authuser = req.user as User;
         try {
             const today = new Date();
-            today.setHours(0, 0, 0, 0); 
+            today.setHours(0, 0, 0, 0);
             const userId = authuser.id;
             const existingPrompt = await Prompt.createQueryBuilder("prompt")
                 .where("prompt.user = :userId", { userId })
@@ -329,13 +329,12 @@ export class UserController {
             const latitude = req.body.latitude || user.latitude;
             const longitude = req.body.longitude || user.longitude;
             const radius = req.body.radius || user.radius;
-            console.log(latitude);
-            console.log(longitude);
-            console.log(radius);
             if (!latitude || !longitude || !radius) {
                 return ResponseHelper.error(res, 'Latitude, longitude, or radius missing', 400);
             }
             const prompts = await Prompt.createQueryBuilder("prompt")
+                .innerJoinAndSelect("prompt.user", "user")
+                .leftJoinAndSelect("user.photos", "photos")
                 .where(`ST_DistanceSphere(
                         ST_MakePoint(prompt.longitude, prompt.latitude), 
                         ST_MakePoint(:longitude, :latitude)
@@ -361,11 +360,22 @@ export class UserController {
     }
     static async myPrompts(req, res, next) {
         try {
-            const prompts = await Prompt.find({ where: { user: { id: req.user.id } } });
+            const prompts = await Prompt.find({
+                where: { user: { id: req.user.id } },
+                relations: {
+                    comments: {
+                        user: {
+                            photos: true
+                        }
+                    },
+                    photo: true
+                },
+                order: { created_at: 'DESC' }
+            });
             return ResponseHelper.success(res, prompts);
         } catch (e) {
             next(e);
         }
     }
-    
+
 }
