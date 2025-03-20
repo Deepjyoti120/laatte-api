@@ -22,6 +22,9 @@ export const DevEnvironment: Environment = {
     // logging: true,
     logging: ['error'],
     logger: "file",
+    ssl: {
+      rejectUnauthorized: false // Add this for RDS connections
+    },
     entities: [
       User,
       Photo,
