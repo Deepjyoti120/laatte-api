@@ -43,7 +43,6 @@
     "sequelize": "^6.37.5",
     "socket.io": "^4.8.1",
     "ts-node": "^10.9.2",
-    "twilio": "^5.5.1",
     "typeorm": "^0.3.20",
     "typeorm-extension": "^3.6.3",
     "typescript": "^5.0.4",

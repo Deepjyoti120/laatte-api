@@ -1,7 +1,6 @@
 import { writeFileSync } from 'fs';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
-import { Twilio } from 'twilio/lib';
 export class ApiAccess {
     static async getExelFromLink(urlString: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
@@ -20,11 +19,25 @@ export class ApiAccess {
             const accountSid = 'AC50f2efd997f6e0d1011221952c0328a8';
             const authToken = '4c5e1ee8cfe79b49bfcedfcdf6b1246a';
             // const serviceId = 'VAe1de93e267dbff570c165a386bec645c';
-            const client = new Twilio(accountSid, authToken);
-            const response = await client.messages.create({
-                from: "+15124026763",
-                to: to,
-                body: message,
+            // const client = new Twilio(accountSid, authToken);
+            // const response = await client.messages.create({
+            //     from: "+15124026763",
+            //     to: to,
+            //     body: message,
+            // });
+            const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+            const response = await axios.post(url, new URLSearchParams({
+                'To': to,
+                'From': '+15124026763',
+                'Body': message
+            }).toString(), {
+                auth: {
+                    username: accountSid,
+                    password: authToken
+                },
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
             });
             return response;
         } catch (error) {
