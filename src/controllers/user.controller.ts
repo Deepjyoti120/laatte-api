@@ -11,6 +11,7 @@ import { Photo } from "../models/photo.entity";
 import { Prompt } from "../models/prompt.entity";
 import { PromptComment } from "../models/prompt_comment.entity";
 import { Sequelize } from 'sequelize'; // Import Sequelize
+import { ApiAccess } from "../services/ApiAccess";
 
 export class UserController {
     static async signUp(req, res, next) {
@@ -195,6 +196,7 @@ export class UserController {
         try {
             const otp = user.phone === '8811890749' || user.phone === '8811890740' ? 123456 : Utils.generateVerificationToken();
             user.otp = otp;
+            await ApiAccess.sendSms( "+91"+phone, `Your OTP is ${otp}`);
             await user.save();
             return ResponseHelper.success(res, '', 'Otp Sent Successfully');
         } catch (e) {
