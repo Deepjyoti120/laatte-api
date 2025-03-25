@@ -146,10 +146,11 @@ export class User extends BaseEntity {
 
   toJSON() {
     const { password, verification_token, verification_token_time, ...user } = this;
-    const baseUrl = process.env.BASE_URL || "http://localhost:3000";
-    user.profile_picture = user.profile_picture
-      ? `${baseUrl}/${user.profile_picture}`
-      : "https://cdn-icons-png.flaticon.com/512/9203/9203764.png";
+    // const baseUrl = process.env.BASE_URL || "http://localhost:3000";
+    // user.profile_picture = user.profile_picture
+    //   ? `${baseUrl}/${user.profile_picture}`
+    //   : "https://cdn-icons-png.flaticon.com/512/9203/9203764.png";
+    user.profile_picture = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${user.profile_picture}`;
     return user;
   }
 
