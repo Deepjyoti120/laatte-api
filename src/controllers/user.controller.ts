@@ -194,10 +194,10 @@ export class UserController {
         const phone = req.body.phone;
         const user = req.user as User;
         try {
-            const testingPhoneNO = ['8811890749', '8811890740'];
-            const otp = testingPhoneNO.includes(user.phone) ? 123456 : Utils.generateVerificationToken();
-            // user.otp = 123456;
-            user.otp = otp;
+            // const testingPhoneNO = ['8811890749', '8811890740'];
+            // const otp = testingPhoneNO.includes(user.phone) ? 123456 : Utils.generateVerificationToken();
+            user.otp = 123456;
+            // user.otp = otp;
             // await ApiAccess.sendSms( "+91"+phone, `Your OTP is ${otp}`);
             await user.save();
             return ResponseHelper.success(res, '', 'Otp Sent Successfully');
