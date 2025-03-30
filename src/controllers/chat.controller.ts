@@ -14,10 +14,16 @@ export class ChatController {
     static async startChat(req, res: Response, next) {
         try {
             const chat = await ChatService.startChat(req.user.id, req.body.receiverId);
-            // res.status(201).json({ success: true, chat });
+            // res.status(201).json({ success: true, chat });${req.user.id}.
+            const io = req.app.get("io");
+            if (!io) {
+              return ResponseHelper.error(res, "WebSocket server not initialized");
+            }
+            const eventName = `people.${req.user.id}.${req.body.receiverId}`;
+            io.emit(eventName, chat);
             return ResponseHelper.created(res, chat);
         } catch (error) {
-          next(error);
+            next(error);
         }
     }
 
@@ -25,7 +31,13 @@ export class ChatController {
         try {
             const message = await ChatService.sendMessage(req.body.chatId, req.user.id, req.body.message);
             // res.status(201).json({ success: true, message });
-            return ResponseHelper.created(res,message);
+            const io = req.app.get("io");
+            if (!io) {
+              return ResponseHelper.error(res, "WebSocket server not initialized");
+            }
+            const eventName = `message.${req.user.id}.${req.body.chatId}`;
+            io.emit(eventName, message);
+            return ResponseHelper.created(res, message);
         } catch (e) {
             next(e);
         }
@@ -42,7 +54,7 @@ export class ChatController {
             next(e);
         }
     }
-    
+
 
     static async deleteChat(req: Request, res: Response) {
         try {

@@ -25,6 +25,7 @@ export class Server {
         this.io = new SocketIOServer(this.server, {
             cors: { origin: "*" },
         });
+        this.app.set("io", this.io);
         // Initialize Redis Pub/Sub
         this.redisPublisher = createClient();
         this.redisSubscriber = createClient();
@@ -86,57 +87,57 @@ export class Server {
         // this.app.use('/api/excel', ExcelRouter);
         // this.app.use('/api/pdf', PDFRouter);
     }
-    // setupWebSocket() {
-    //     this.io.on("connection", (socket) => {
-    //         console.log("New WebSocket connection:", socket.id);
-    //         socket.on("message", (data) => {
-    //             console.log("Received:", data);
-    //             // socket.broadcast.emit("message", data);
-    //             this.redisPublisher.publish("message", JSON.stringify(data));
-    //         });
-    //         socket.on("disconnect", () => {
-    //             console.log("User disconnected:", socket.id);
-    //         });
-    //         this.redisSubscriber.subscribe("message", (message) => {
-    //             console.log("Broadcasting redisSubscriber message:", message);
-    //             this.io.emit("message", JSON.parse(message)); 
-    //         });
-    //     });
-    // }
-    // server.ts
     setupWebSocket() {
         this.io.on("connection", (socket) => {
             console.log("New WebSocket connection:", socket.id);
-
-            socket.on("joinChat", (data) => {
-                const chatId = data.chatId;
-                socket.join(chatId);
-                console.log(`User joined chat: ${chatId}`);
+            socket.on("message", (data) => {
+                console.log("Received:", data);
+                // socket.broadcast.emit("message", data);
+                this.redisPublisher.publish("message", JSON.stringify(data));
             });
-
-            socket.on("sendMessage", async (messageData) => {
-                console.log("Received message:", messageData);
-                const data = messageData;
-                try {
-                    const newMessage = await ChatService.sendMessage(data.chatId, data.senderId, data.message);
-                    // this.io.to(data.chatId).emit("newMessage", newMessage);
-                    this.io.emit("newMessage", data);
-                    // this.redisPublisher.publish("newMessage", JSON.stringify(data));
-                } catch (error) {
-                    console.error("Error handling message:", error);
-                }
-            });
-            // this.redisSubscriber.subscribe("newMessage", (message) => {
-            //     console.log("Broadcasting redisSubscriber message:", JSON.parse(message));
-            //     console.log("message.chatId:", JSON.parse(message).chatId);
-            //     // this.io.to(message.chatId).emit("newMessage", JSON.parse(message));
-            //     this.io.emit("newMessage", JSON.parse(message));
-            // });
             socket.on("disconnect", () => {
                 console.log("User disconnected:", socket.id);
             });
+            this.redisSubscriber.subscribe("message", (message) => {
+                console.log("Broadcasting redisSubscriber message:", message);
+                this.io.emit("message", JSON.parse(message)); 
+            });
         });
     }
+    // server.ts
+    // setupWebSocket() {
+    //     this.io.on("connection", (socket) => {
+    //         console.log("New WebSocket connection:", socket.id);
+
+    //         socket.on("joinChat", (data) => {
+    //             const chatId = data.chatId;
+    //             socket.join(chatId);
+    //             console.log(`User joined chat: ${chatId}`);
+    //         });
+
+    //         socket.on("sendMessage", async (messageData) => {
+    //             console.log("Received message:", messageData);
+    //             const data = messageData;
+    //             try {
+    //                 const newMessage = await ChatService.sendMessage(data.chatId, data.senderId, data.message);
+    //                 // this.io.to(data.chatId).emit("newMessage", newMessage);
+    //                 this.io.emit("newMessage", data);
+    //                 // this.redisPublisher.publish("newMessage", JSON.stringify(data));
+    //             } catch (error) {
+    //                 console.error("Error handling message:", error);
+    //             }
+    //         });
+    //         // this.redisSubscriber.subscribe("newMessage", (message) => {
+    //         //     console.log("Broadcasting redisSubscriber message:", JSON.parse(message));
+    //         //     console.log("message.chatId:", JSON.parse(message).chatId);
+    //         //     // this.io.to(message.chatId).emit("newMessage", JSON.parse(message));
+    //         //     this.io.emit("newMessage", JSON.parse(message));
+    //         // });
+    //         socket.on("disconnect", () => {
+    //             console.log("User disconnected:", socket.id);
+    //         });
+    //     });
+    // }
 
 
     error404Handler() {
