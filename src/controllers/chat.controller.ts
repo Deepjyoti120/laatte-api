@@ -59,9 +59,9 @@ export class ChatController {
     static async deleteChat(req: Request, res: Response) {
         try {
             await ChatService.deleteChat(req.params.chatId);
-            res.status(200).json({ success: true, message: "Chat deleted successfully" });
+            return ResponseHelper.success(res, "Chat deleted successfully");
         } catch (error) {
-            res.status(500).json({ success: false, message: error.message });
+            return ResponseHelper.error(res, error.message );
         }
     }
 }
