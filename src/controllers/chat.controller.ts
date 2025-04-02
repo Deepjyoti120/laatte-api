@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { ChatService } from "../services/ChatService";
 import ResponseHelper from "../services/ResponseHelper";
 import { MatchPrompt } from "../models/swiped_prompts.entity";
+import { PromptComment } from "../models/prompt_comment.entity";
+import { Prompt } from "../models/prompt.entity";
 
 export class ChatController {
     static async getChats(req, res: Response, next) {
@@ -15,11 +17,19 @@ export class ChatController {
     static async startChat(req, res: Response, next) {
         try {
             const chat = await ChatService.startChat(req.user.id, req.body.receiverId);
+            const prompt = req.body.prompt as Prompt;
+            const comment = req.body.comment as PromptComment;
             await MatchPrompt.create({
                 user: { id: req.user.id },
-                prompt: { id: req.body.receiverId },
+                prompt: { id: prompt.id },
                 // action: "right",
             }).save();
+            // await ChatService.sendMessage(chat.id, req.user.id, req.body.message);
+            const preMessages = [prompt.prompt,comment.comment];
+            const preIds = [req.user.id,req.body.receiverId];
+            for (let index = 0; index < 2; index++) {
+                await ChatService.sendMessage(chat.id, preIds[index], preMessages[index]);
+            }
             // res.status(201).json({ success: true, chat });${req.user.id}.
             const io = req.app.get("io");
             if (!io) {
