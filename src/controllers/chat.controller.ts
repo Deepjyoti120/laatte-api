@@ -16,24 +16,10 @@ export class ChatController {
     }
     static async startChat(req, res: Response, next) {
         try {
-            const chat = await ChatService.startChat(req.user.id, req.body.receiverId);
-            const prompt = req.body.prompt as Prompt;
-            const comment = req.body.comment as PromptComment;
-            await MatchPrompt.create({
-                user: { id: req.user.id },
-                prompt: { id: prompt.id },
-                // action: "right",
-            }).save();
-            // await ChatService.sendMessage(chat.id, req.user.id, req.body.message);
-            const preMessages = [prompt.prompt,comment.comment];
-            const preIds = [req.user.id,req.body.receiverId];
-            for (let index = 0; index < 2; index++) {
-                await ChatService.sendMessage(chat.id, preIds[index], preMessages[index]);
-            }
-            // res.status(201).json({ success: true, chat });${req.user.id}.
+            const chat = await ChatService.startChat(req.user.id, req.body.receiverId, req);
             const io = req.app.get("io");
             if (!io) {
-              return ResponseHelper.error(res, "WebSocket server not initialized");
+                return ResponseHelper.error(res, "WebSocket server not initialized");
             }
             const eventName = `people.${req.user.id}.${req.body.receiverId}`;
             io.emit(eventName, chat);
@@ -49,7 +35,7 @@ export class ChatController {
             // res.status(201).json({ success: true, message });
             const io = req.app.get("io");
             if (!io) {
-              return ResponseHelper.error(res, "WebSocket server not initialized");
+                return ResponseHelper.error(res, "WebSocket server not initialized");
             }
             const eventName = `message.${message.chat.user1.id}.${message.chat.user2.id}.${req.body.chatId}`;
             io.emit(eventName, message);
@@ -77,7 +63,7 @@ export class ChatController {
             await ChatService.deleteChat(req.params.chatId);
             return ResponseHelper.success(res, "Chat deleted successfully");
         } catch (error) {
-            return ResponseHelper.error(res, error.message );
+            return ResponseHelper.error(res, error.message);
         }
     }
 }
