@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ChatService } from "../services/ChatService";
 import ResponseHelper from "../services/ResponseHelper";
+import { MatchPrompt } from "../models/swiped_prompts.entity";
 
 export class ChatController {
     static async getChats(req, res: Response, next) {
@@ -14,6 +15,11 @@ export class ChatController {
     static async startChat(req, res: Response, next) {
         try {
             const chat = await ChatService.startChat(req.user.id, req.body.receiverId);
+            await MatchPrompt.create({
+                user: { id: req.user.id },
+                prompt: { id: req.body.receiverId },
+                // action: "right",
+            }).save();
             // res.status(201).json({ success: true, chat });${req.user.id}.
             const io = req.app.get("io");
             if (!io) {

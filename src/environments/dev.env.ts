@@ -8,6 +8,7 @@ import { Prompt } from "../models/prompt.entity";
 import { PromptComment } from "../models/prompt_comment.entity";
 import { Chat } from "../models/chat.entity";
 import { Message } from "../models/message.entity";
+import { MatchPrompt } from "../models/swiped_prompts.entity";
 
 dotenv.config();
 export const DevEnvironment: Environment = {
@@ -29,6 +30,7 @@ export const DevEnvironment: Environment = {
       PromptComment,
       Chat,
       Message,
+      MatchPrompt,
     ],
     subscribers: [],
     migrations: [],

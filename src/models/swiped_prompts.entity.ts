@@ -2,8 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, CreateDa
 import { User } from './user.entity';
 import { Prompt } from './prompt.entity';
 
-@Entity('swiped_prompts')
-export class SwipedPrompt extends BaseEntity {
+@Entity('match_prompts')
+export class MatchPrompt extends BaseEntity {
 
   @PrimaryGeneratedColumn('uuid')
   id: string;

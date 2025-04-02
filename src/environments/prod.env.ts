@@ -8,6 +8,7 @@ import { Prompt } from "../models/prompt.entity";
 import { Chat } from "../models/chat.entity";
 import { PromptComment } from "../models/prompt_comment.entity";
 import { Message } from "../models/message.entity";
+import { MatchPrompt } from "../models/swiped_prompts.entity";
 dotenv.config();
 export const ProdEnvironment: Environment = {
   db: new DataSource({
@@ -36,6 +37,7 @@ export const ProdEnvironment: Environment = {
       PromptComment,
       Chat,
       Message,
+      MatchPrompt,
     ],
     subscribers: [],
     migrations: [],
