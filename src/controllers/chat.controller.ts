@@ -35,7 +35,7 @@ export class ChatController {
             if (!io) {
               return ResponseHelper.error(res, "WebSocket server not initialized");
             }
-            const eventName = `message.${req.user.id}.${req.body.chatId}`;
+            const eventName = `message.${message.chat.user2.id}.${message.chat.user1.id}.${req.body.chatId}`;
             io.emit(eventName, message);
             return ResponseHelper.created(res, message);
         } catch (e) {
