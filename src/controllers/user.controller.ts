@@ -12,6 +12,7 @@ import { Prompt } from "../models/prompt.entity";
 import { PromptComment } from "../models/prompt_comment.entity";
 import { Sequelize } from 'sequelize'; // Import Sequelize
 import { ApiAccess } from "../services/ApiAccess";
+import { SwipedPrompt } from "../models/swiped_prompts.entity";
 
 export class UserController {
     static async signUp(req, res, next) {
@@ -337,6 +338,12 @@ export class UserController {
             if (!latitude || !longitude || !radius) {
                 return ResponseHelper.error(res, 'Latitude, longitude, or radius missing', 400);
             }
+            const swipedPromptIds = await SwipedPrompt.createQueryBuilder("swiped")
+            .select("swiped.prompt_id")
+            .where("swiped.user_id = :userId", { userId: user.id })
+            .getMany();
+            const ignoredPromptIds = swipedPromptIds.map(swipe => swipe.prompt.id);
+
             const prompts = await Prompt.createQueryBuilder("prompt")
                 .innerJoinAndSelect("prompt.user", "user")
                 .leftJoinAndSelect("user.photos", "photos")
@@ -349,6 +356,7 @@ export class UserController {
                     radius: radius * 1000
                 })
                 .andWhere("prompt.user_id != :userId", { userId: user.id })
+                .andWhere(ignoredPromptIds.length > 0 ? "prompt.id NOT IN (:...ignoredPromptIds)" : "1=1", { ignoredPromptIds })
                 .getMany();
 
             if (prompts.length > 0) {
