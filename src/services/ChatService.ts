@@ -47,8 +47,8 @@ export class ChatService {
                 // action: "right",
             }).save();
             // await ChatService.sendMessage(chat.id, req.user.id, req.body.message);
-            const preMessages = [prompt.prompt,comment.comment];
-            const preIds = [req.user.id,req.body.receiverId];
+            const preMessages = [prompt.prompt, comment.comment];
+            const preIds = [req.user.id, req.body.receiverId];
             for (let index = 0; index < 2; index++) {
                 await ChatService.sendMessage(chat.id, preIds[index], preMessages[index]);
             }
@@ -60,41 +60,41 @@ export class ChatService {
     static async sendMessage(chatId: string, senderId: string, content: string) {
         try {
             if (!chatId || !senderId || !content.trim()) {
-                console.log(chatId,senderId,content);
+                console.log(chatId, senderId, content);
                 throw new Error("chatId, senderId, and content are required.");
             }
-    
-            const chat = await Chat.findOne({ where: { id: chatId } });
+
+            const chat = await Chat.findOne({ where: { id: chatId }, relations: ["user1", "user2"], });
             if (!chat) {
                 throw new Error("Chat not found.");
             }
-    
+
             const sender = await User.findOne({ where: { id: senderId } });
             if (!sender) {
                 throw new Error("Sender not found.");
             }
-    
+
             const message = Message.create({ chat, sender, content });
             await message.save();
-    
+
             chat.lastMessage = message;
             await chat.save();
-    
+
             return message;
         } catch (error) {
             throw new Error(`Failed to send message: ${error.message}`);
         }
     }
-    
-    
-    
 
-    static async getMessages(chatId: string) { 
-        return await Message.find({ where: { chat: { id: chatId } },relations: ['sender'], order: { created_at: "ASC" } });
+
+
+
+    static async getMessages(chatId: string) {
+        return await Message.find({ where: { chat: { id: chatId } }, relations: ['sender'], order: { created_at: "ASC" } });
     }
 
     static async deleteChat(chatId: string) {
         return await Chat.delete({ id: chatId });
-    } 
-    
+    }
+
 }
